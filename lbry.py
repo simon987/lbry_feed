@@ -205,6 +205,7 @@ class LbryWrapper:
                 if not published_channel_data:
                     channel_data = self._api.resolve([channel_url])[channel_url]
                     yield channel_data, "channel"
+                    published_channel_data = True
 
                 if not self._state.has_visited(claim["claim_id"]):
                     yield claim, "video"
