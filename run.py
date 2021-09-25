@@ -1,10 +1,8 @@
 import json
-import redis
-import os
+
+from hexlib.env import get_redis
 
 from lbry import LbryWrapper
-
-REDIS_HOST = os.environ.get("LF_REDIS_HOST", "localhost")
 
 
 def publish(item, item_type):
@@ -24,7 +22,7 @@ def publish(item, item_type):
 if __name__ == '__main__':
     lbry = LbryWrapper()
 
-    rdb = redis.Redis(host=REDIS_HOST)
+    rdb = get_redis()
 
     for item, item_type in lbry.all_items():
         publish(item, item_type)

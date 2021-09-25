@@ -1,3 +1,3 @@
 requests
-git+git://github.com/simon987/hexlib.git
 redis
+git+git://github.com/simon987/hexlib.git

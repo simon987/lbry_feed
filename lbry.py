@@ -1,10 +1,11 @@
-from time import time
 import json
+import os
+from time import time
 
 import requests
+from hexlib.log import logger
 
 from state import LbryState
-from util import logger
 
 BASE_URL = "https://api.lbry.tv/api"
 LIGHTHOUSE_URL = "https://lighthouse.lbry.com"
@@ -17,6 +18,12 @@ def now():
 class LbryApi:
     def __init__(self):
         self._s = requests.session()
+
+        if os.environ.get("PROXY") is not None:
+            self._s.proxies = {
+                "http": os.environ.get("PROXY"),
+                "https": os.environ.get("PROXY"),
+            }
 
     def _post(self, url, **kwargs):
         r = self._s.post(url, **kwargs)
@@ -178,6 +185,10 @@ class LbryWrapper:
             # ancaps
             "0135b83c29aa82120401f3f9053bf5b0520529ed",
             "b89ed227c49e726fcccf913bdc9dec4c8fec99c2",
+
+            "6caae01aaa534cc4cb2cb1d8d0a8fd4a9553b155",
+            "dbe7328c6698c8d8853183f87e50a97a87a33222",
+            "8954add966e59c9cba98a143a3387f788a36d7be"
         ]
 
         for channel_id in seed_list:
@@ -199,6 +210,9 @@ class LbryWrapper:
             published_channel_data = False
 
             for claim in self._get_videos(channel_id):
+
+                if "short_url" not in claim["signing_channel"]:
+                    continue
 
                 channel_url = claim["signing_channel"]["short_url"]
 
@@ -237,5 +251,3 @@ class LbryWrapper:
             self._state.mark_visited(channel_id)
 
         logger.warning("No more channels to crawl!")
-
-
